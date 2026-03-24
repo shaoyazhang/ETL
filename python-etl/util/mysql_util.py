@@ -17,6 +17,11 @@ class MySQLUtil:
         ''' 
         创建MySQL的链接
         '''
+        host = 'localhost',
+        port = 3306, # 一定是整型
+        user = 'root',
+        password = 'Alph@2025',
+        charset = 'utf8' # utf8不是utf-8
       
     def query(self, sql):
         pass
