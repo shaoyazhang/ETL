@@ -45,7 +45,7 @@ class MySQLUtil:
             autocommit = autocommit 
         )
         if self.conn:
-            logger.info('数据库链接建立成功')
+            logger.info(f'构建完成到{host}:{port}的数据库{database}的连接')
       
     def query(self, sql):
         """_summary_
@@ -114,12 +114,20 @@ class MySQLUtil:
     
     
 if __name__ == '__main__':
+    # 链接到元数据库
     mysql_util = MySQLUtil()
-    # mysql_util.close()
-    # query_result = mysql_util.query('select* from test')
-    # logger.info(query_result)
     mysql_util.query('select* from test')
     mysql_util.select_db('retail')
     mysql_util.query('SELECT database()')   # 查询现在的数据库
     mysql_util.close()
+    
+    # 链接到目的地数据库
+    target_mysql_util = MySQLUtil(
+        host=config.target_host,
+        port=config.target_port,
+        password = config.metadata_password,
+        charset = config.mysql_charset,
+        database = config.target_database
+    )
+    
     
