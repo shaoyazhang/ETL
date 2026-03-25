@@ -1,5 +1,5 @@
 from unittest import TestCase
-from util.file_util import get_dir_files_list
+from util.file_util import get_dir_files_list, get_new_by_compare_lists
 import os
 from pathlib import Path
 class TestFileUtil(TestCase):
@@ -42,6 +42,12 @@ class TestFileUtil(TestCase):
             result.append(str(self.project_root_path / 'test_dir' / p))
         self.assertEqual(result.sort(), result2.sort())
     
-    
+    def test_get_new_by_compare_lists(self):
+        a_list = ['e:/a.txt', 'e:/b.txt', 'e:/c.txt', 'e:/d.txt']
+        b_list = ['e:/a.txt', 'e:/b.txt']
+        result = get_new_by_compare_lists(a_list, b_list)
+        expected = ['e:/c.txt', 'e:/d.txt']
+        self.assertEqual(expected.sort(), result.sort())
+        pass
     def tearDown(self) -> None:
         pass

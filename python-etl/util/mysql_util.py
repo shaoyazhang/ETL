@@ -142,7 +142,38 @@ class MySQLUtil:
             self.conn.close()
             self.conn = None # 防御性编程
     
+def get_processed_files(db_util, 
+                        db_name=config.metadata_database, 
+                        table_name=config.metadata_file_monitor_table_name, 
+                        create_cols=config.metadata_file_monitor_table_create_cols):
+    """_summary_
+    获取处理过的文件名
+    Args:
+        db_util (_type_): MySQLUtil实例对象
+        db_name (_type_, optional): 数据库名称. 默认metadata_database.
+        table_name (_type_, optional): 元数据库名称. 默认metadata_file_monitor_table_name.
+        create_cols (_type_, optional): 建表语句. 默认metadata_file_monitor_table_create_cols.
+        return: 处理过的文件路径组成的列表
+    """
+    db_util.select_db(db_name)
+    # 判断元数据表是否存在
+    if not db_util.check_table_existes(db_name, table_name):
+        # 如果不存在就建表
+        db_util.create_table(db_name, table_name, create_cols)
+        return []
+    else:
+        logger.debug(f'{table_name}已经存在，跳过建表')
     
+    # 查询元数据表中存的处理过的文件名
+    results = db_util.query(
+        f'SELECT file_name FROM {table_name}')
+    # results是一个元祖 (('file1', ), ('file2', ))
+    file_names = []
+    for result in results:
+        file_names.append(result[0])
+        
+    return file_names
+     
     
 if __name__ == '__main__':
     # 链接到元数据库

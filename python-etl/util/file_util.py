@@ -23,3 +23,21 @@ def get_dir_files_list(path, recursive=False):
                 
     return files
 
+
+def get_new_by_compare_lists(a_list, b_list):
+    ''' 
+    接收两个列表对比他们的差异
+    a_list: 接收的是从指定目录中获取的文件名
+    b_list: 接收的是从元数据表中获取的处理过的文件名
+    return: 两个列表差异
+    '''
+    # 在a_list且不在b_list中的元素
+    return list(set(a_list) - set(b_list))
+
+def get_new_by_compare_lists1(a_list, b_list):
+    result = []
+    for a in a_list:
+        if a not in b_list:
+            result.append(a)
+            
+    return result
