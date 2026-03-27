@@ -1,1 +1,4 @@
 pytest*
+/data/
+*.log
+*.csv
