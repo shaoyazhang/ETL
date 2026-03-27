@@ -105,3 +105,10 @@ target_orders_detail_table_create_cols = """
     unit_id INT COMMENT '商品单位ID(包、袋、箱、等)',
     PRIMARY KEY (order_id, barcode)
 """
+
+# CSV文件输出的根目录
+retail_output_csv_root_path = 'D:\\Pythons_studies\\logs\\csv'
+# CSV文件输出的订单信息文件名，包含时间戳
+retail_orders_output_csv_filename = f'orders-{time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))}.csv'
+# CSV文件输出的订单详情信息文件名，包含时间戳
+retail_order_detail_output_csv_filename = f'order_detail-{time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))}.csv'
