@@ -46,3 +46,36 @@ def check_str_null_and_transform_to_sql_null(data):
 
 
 
+def clean_str(data: str):
+    """
+    清洗字符串，去掉字符串中的换行符、制表符、回车符等特殊字符
+    data: 传入的被清洗的字符串内容
+    return: 返回清洗后的字符串内容
+    """
+    if check_null(str(data)):
+        # 内容无意义，比如字符串None, Null等这些不影响插入操作，直接返回原字符串
+        return data
+    else:
+        # 替换掉字符串中的换行符、制表符、回车符等特殊字符
+        data = data.replace("'", "")
+        data = data.replace('"', "")
+        data = data.replace("\\", "")
+        data = data.replace(";", "")
+        data = data.replace(",", "")
+        data = data.replace("@", "")
+        data = data.replace("\n", "")
+        data = data.replace("\t", "")
+        data = data.replace("\r", "")
+        return data
+    
+def check_number_null_and_transform_to_sql_null(data):
+    """
+    检查传入的数字字符串，是否为无意义内容，如果是就返回sql中的null, 否则返回原字符串
+    无意义：字符串为空字符串，内容是None, null, undeined 
+    data: 传入的被检查的数字字符串内容
+    return: 如果data是无意义内容，返回sql中的null，否则返回原字符串
+    """
+    if data and not check_null(str(data)):
+        return data
+    
+    return "NULL"

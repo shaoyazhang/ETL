@@ -3,9 +3,9 @@ from pathlib import Path
 import json
 import pymysql
 # “动态改 Python 模块搜索路径”
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+# PROJECT_ROOT = Path(__file__).resolve().parents[1]
+# if str(PROJECT_ROOT) not in sys.path:
+#     sys.path.insert(0, str(PROJECT_ROOT))
     
 """
 json文件处理的主要逻辑
@@ -15,6 +15,8 @@ from util.file_util import get_dir_files_list, get_new_by_compare_lists
 import config.project_config as config
 from util.mysql_util import MySQLUtil, get_processed_files
 from model.retail_orders_model import OrderModel, OrderDetailModel
+
+
 
 logger = init_logger()
 logger.setLevel(20) # 设置日志级别
@@ -27,11 +29,11 @@ logger.debug(f'判断json的文件夹，发现有如下文件：{files}')
 db_util = MySQLUtil()
 ## 2.2 获取处理过的文件名
 processed_files = get_processed_files(db_util)
-logger.debug(f"查询MySQL, 找到有如下文件已经被处理过了：{processed_files}")
+logger.info(f"查询MySQL, 找到有如下文件已经被处理过了：{processed_files}")
 
 # 3. 通过比较函数获取待处理的json文件名
 need_to_process_files = get_new_by_compare_lists(files, processed_files)
-logger.debug(f'经过对比mysql元数据库，找出如下文件供我们处理：{need_to_process_files}')
+logger.info(f'经过对比mysql元数据库，找出如下文件供我们处理：{need_to_process_files}')
 
 processed_file_records_dict = {} # 记录每个文件处理了多少条数据，key是文件名，value是处理的订单数据条数
 
@@ -117,7 +119,7 @@ for filename in need_to_process_files:
             target_util.conn.commit()
             
     target_util.conn.commit() # 提交剩余的不足1000条的数据     
-    logger.debug(f'{filename}订单数据已经写入到目的地数据库的{config.target_orders_table_name}表中了！')
+    logger.info(f'{filename}订单数据已经写入到目的地数据库的{config.target_orders_table_name}表中了！')
     # order_detail表的写入
     if not target_util.check_table_existes(
         config.target_database,
@@ -138,21 +140,21 @@ for filename in need_to_process_files:
             target_util.conn.commit()
     
     target_util.conn.commit() # 提交剩余的不足1000条的数据
-    logger.debug(f'订单详情数据已经写入到目的地数据库的{config.target_order_detail_table_name}表中了！')
+    logger.info(f'订单详情数据已经写入到目的地数据库的{config.target_order_detail_table_name}表中了！')
     target_util.close_conn() # 关闭目的地数据库的连接
 global_count = sum(processed_file_records_dict.values())
 
-logger.debug(f"完成了CSV备份文件的写出，写出到了{config.retail_output_csv_root_path}目录下！")
-logger.debug(f"完成了SQL数据库的写入，写入到了目的地数据库的{config.target_orders_table_name}表和{config.target_order_detail_table_name}表中！")
-logger.debug(f"总共处理了{global_count}条订单数据！")
+logger.info(f"完成了CSV备份文件的写出，写出到了{config.retail_output_csv_root_path}目录下！")
+logger.info(f"完成了SQL数据库的写入，写入到了目的地数据库的{config.target_orders_table_name}表和{config.target_order_detail_table_name}表中！")
+logger.info(f"总共处理了{global_count}条订单数据！")
 
-metadata_db_util = MySQLUtil()
+# metadata_db_util = MySQLUtil()
 
 for filename, processed_lines in processed_file_records_dict.items():
     file_name = Path(filename).as_posix() if filename else ''
     file_name_safe = file_name.replace("'", "''")
     insert_sql = f"INSERT IGNORE INTO {config.metadata_file_monitor_table_name} (file_name, proces_line) VALUES ('{file_name_safe}', {processed_lines})"
-    metadata_db_util.execute_with_autocommit(insert_sql)
+    db_util.execute_with_autocommit(insert_sql)
 
-metadata_db_util.close_conn()
-logger.debug(f"已经把处理过的文件名和处理的订单数据条数记录到了元数据库的{config.metadata_file_monitor_table_name}表中！")
+db_util.close_conn()
+logger.info(f"已经把处理过的文件名和处理的订单数据条数记录到了元数据库的 {config.metadata_file_monitor_table_name}表中！")

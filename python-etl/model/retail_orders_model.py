@@ -249,6 +249,7 @@ class SingleProductSoldModel:
             self.category_id
         ])
     
+
 if __name__ == "__main__":
     jsonStr = '{"discountRate":0.9,"storeShopNo":"None","dayOrderSeq":1,"storeDistrict":"朝阳区","isSigned":1,"storeProvince":"北京市","origin":"app","storeGPSLongitude":"116.481488","discount":10,"storeID":1001,"productCount":3,"operatorName":"张三","operator":"10001","storeStatus":"营业中","storeOwnUserTel":"13800000000","payType":"微信支付","discountType":"会员折扣","storeName":"测试店铺","storeOwnUserName":"李四","dateTS":1622520000000,"smallChange":0.5,"storeGPSName":"测试店铺GPS名称","erase":0,"storeGPSAddress":"测试店铺GPS地址","orderID":"ORD1234567890","moneyBeforeWholeDiscount":100,"storeCategory":"餐饮","receivable":90,"faceID":"FACE1234567890","storeOwnUserId":20001,"paymentChannel":"线上","paymentScenarios":"正常支付","storeAddress":"测试店铺地址","totalNoDiscount":110,"payedTotal":90,"storeGPSLatitude":"39.990475","storeCreateDateTS":1609459200000,"storeCity":"北京市","memberID":30001,"product":[{"name":"商品A","count":2,"unitID":"U01","barcode":"1234567890","pricePer":10,"retailPrice":12,"tradePrice":8,"categoryID":"CAT01"},{"name":"商品B","count":1,"unitID":"U02","barcode":"0987654321","pricePer":20,"retailPrice":24,"tradePrice":16,"categoryID":"CAT02"}]}'
     print(type(jsonStr))

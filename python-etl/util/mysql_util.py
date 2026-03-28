@@ -57,7 +57,7 @@ class MySQLUtil:
         cursor.execute(sql)
         result = cursor.fetchall()
         cursor.close()
-        logger.info(f'执行完查询语句：{sql}, 执行结果：{result}')
+        logger.debug(f'执行完查询语句：{sql}, 执行结果：{result}')
         return result
     
     
@@ -70,7 +70,7 @@ class MySQLUtil:
         # cursor = self.conn.cursor()
         # cursor.execute('use ' + db_name + ';')
         sql_syntax = 'use ' + db_name + ';'
-        logger.info(f'当前执行的sql语句 {sql_syntax}')
+        logger.debug(f'当前执行的sql语句 {sql_syntax}')
         self.conn.select_db(db_name)
         
     def execute_with_autocommit(self, sql):
@@ -141,6 +141,7 @@ class MySQLUtil:
         if self.conn:
             self.conn.close()
             self.conn = None # 防御性编程
+  
     
 def get_processed_files(db_util, 
                         db_name=config.metadata_database, 
@@ -162,7 +163,7 @@ def get_processed_files(db_util,
         db_util.create_table(db_name, table_name, create_cols)
         return []
     else:
-        logger.debug(f'{table_name}已经存在，跳过建表')
+        logger.info(f'{table_name}已经存在，跳过建表')
     
     # 查询元数据表中存的处理过的文件名
     results = db_util.query(
@@ -174,7 +175,7 @@ def get_processed_files(db_util,
         
     return file_names
      
-    
+   
 if __name__ == '__main__':
     # 链接到元数据库
     mysql_util = MySQLUtil()
