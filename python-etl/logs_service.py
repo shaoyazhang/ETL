@@ -51,6 +51,15 @@ logger.info(f"经过对比，找到了{len(need_to_process_files)}个日志文�
 
 processed_files_dict = {} # 记录每个文件处理了多少条数据，key是文件名，value是处理的日志数据条数
 
+# 3.1 检查目的地数据库的logs表是否存在，如果不存在则创建
+if not target_util.check_table_existes(config.target_database, config.target_logs_table_name):
+    logger.info(f"目的地数据库{config.target_database}中不存在表{config.target_logs_table_name}，将会自动创建这个表！")
+    target_util.create_table(
+        config.target_database,
+        config.target_logs_table_name,
+        config.target_logs_table_create_cols
+    )
+
 # 3. 依次处理每个日志文件
 for file in need_to_process_files:
     logger.info(f"开始处理日志文件{file}！")
@@ -86,6 +95,8 @@ for file in need_to_process_files:
     
     processed_files_dict[file] = processed_line_count
     logger.info(f"文件{file}处理完毕，共处理了{processed_line_count}条日志数据！")
+    
+    # 3.1 写入CSV文件
     log_model_write_csv = open(
         file = config.logs_output_csv_root_path + "/" + config.logs_output_csv_filename,
         mode = 'a',
@@ -95,16 +106,7 @@ for file in need_to_process_files:
         log_model_write_csv.write(model.to_csv() + "\n")
     log_model_write_csv.close()
 
-    # 3.2 从日志文件中读取数据，按照时间顺序处理，写入到目的地数据库的表中
-    ## 3.2.1 先检查存储日志文件处理状态的监控表是否存在，如果不存在则创建这个表
-    if not target_util.check_table_existes(config.target_database, config.target_logs_table_name):
-        logger.info(f"目的地数据库{config.target_database}中不存在表{config.target_logs_table_name}，将会自动创建这个表！")
-        target_util.create_table(
-            config.target_database,
-            config.target_logs_table_name,
-            config.target_logs_table_create_cols
-        )
-    
+    # 3.2 写入到目的地数据库的表中
     for i, model in enumerate(log_model_list):
         sql = model.generate_insert_sql(config.target_logs_table_name)
         target_util.select_db(config.target_database)
